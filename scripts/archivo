@@ -1,2 +1,6 @@
 install.packages("ggplot2")
 
+table(TenderosFU03_BLandFUmerged_pub$Capac)
+
+prop.table(table(TenderosFU03_BLandFUmerged_pub$Capac))*100
+
