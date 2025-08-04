@@ -5,10 +5,10 @@ install.packages("ggplot2")
 library(ggplot2)
 
 # Observa la frecuencia de cada respuesta en la variable 'Capac' del dataframe principal
-table(TenderosFU03_BLandFUmerged_pub$Capac)
+table(TenderosFU03_Publica$Capac)
 
 # Calcula el porcentaje de cada respuesta
-prop.table(table(TenderosFU03_BLandFUmerged_pub$Capac)) * 100
+prop.table(table(TenderosFU03_Publica$Capac)) * 100
 
 # Crea un resumen (dataframe) con los porcentajes obtenidos anteriormente
 resumen <- data.frame(
