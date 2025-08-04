@@ -1,6 +1,31 @@
+# Instala ggplot2 solo la primera vez (luego puedes comentar esta línea)
 install.packages("ggplot2")
 
+# Carga la librería de gráficos
+library(ggplot2)
+
+# Observa la frecuencia de cada respuesta en la variable 'Capac' del dataframe principal
 table(TenderosFU03_BLandFUmerged_pub$Capac)
 
-prop.table(table(TenderosFU03_BLandFUmerged_pub$Capac))*100
+# Calcula el porcentaje de cada respuesta
+prop.table(table(TenderosFU03_BLandFUmerged_pub$Capac)) * 100
 
+# Crea un resumen (dataframe) con los porcentajes obtenidos anteriormente
+resumen <- data.frame(
+  Respuesta = c("No", "Sí"),
+  Porcentaje = c(74.42, 25.57)
+)
+
+# Muestra el resumen para verificar su contenido
+print(resumen)
+
+# Grafica los resultados con ggplot2
+ggplot(resumen, aes(x = Respuesta, y = Porcentaje, fill = Respuesta)) +
+  geom_bar(stat = "identity") +  # Dibuja las barras según los porcentajes
+  geom_text(aes(label = paste0(round(Porcentaje, 1), "%")), vjust = -0.5) +  # Agrega etiquetas de porcentaje arriba de cada barra
+  labs(
+    title = "¿En los últimos 2 años... ha recibido capacitación?",
+    x = "Respuesta",
+    y = "Porcentaje"
+  ) +
+  theme_minimal()  # Usa un tema visual limpio
