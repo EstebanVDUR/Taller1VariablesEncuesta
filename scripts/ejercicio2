@@ -1,0 +1,11 @@
+library(tidyr)
+library(dplyr)
+data_muni = data.frame(TenderosFU03_BLandFUmerged_pub$Munic_Dept)
+data_muni2<- TenderosFU03_BLandFUmerged_pub %>%
+  group_by(Munic_Dept,actG1, actG2, actG3, actG4, actG5, actG6, actG7, actG8, actG9, actG10, actG11)%>%
+  summarise()
+data_muni3 <- data_muni2%>%
+  pivot_longer(cols= actG1:actG11, names_to='Act_eco', values_to='total')%>%
+data_muni3 <- data_muni3 %>% separate(Act_eco, Munic_Dept)
+head(data_muni3)
+View(data_muni3)  
