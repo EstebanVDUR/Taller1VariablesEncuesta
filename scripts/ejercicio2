@@ -1,11 +1,20 @@
-library(tidyr)
 library(dplyr)
-data_muni = data.frame(TenderosFU03_BLandFUmerged_pub$Munic_Dept)
-data_muni2<- TenderosFU03_BLandFUmerged_pub %>%
-  group_by(Munic_Dept,actG1, actG2, actG3, actG4, actG5, actG6, actG7, actG8, actG9, actG10, actG11)%>%
-  summarise()
-data_muni3 <- data_muni2%>%
-  pivot_longer(cols= actG1:actG11, names_to='Act_eco', values_to='total')%>%
-data_muni3 <- data_muni3 %>% separate(Act_eco, Munic_Dept)
-head(data_muni3)
-View(data_muni3)  
+library(tidyr)
+
+# Crear data_frame primero
+data_frame <- TenderosFU03_Publica %>%
+  group_by(Munic_Dept, Municipio) %>%
+  summarise(internet = mean(uso_internet, na.rm = TRUE) * 100) %>%
+  ungroup() %>%
+  rename(divipola = Munic_Dept)
+
+data_frame2 <- TenderosFU03_Publica%>%
+  #filter(actG1==1, uso_internet==1)
+  pivot_longer(cols=actG1:actG11, names_to = 'act', values_to = 'total')
+
+frame <- data_frame2%>%
+  group_by(act)%>%
+  summarise(internet=mean(uso_internet, na.rm = TRUE)*100)
+
+#cod_frame <- TerriData_Dim2_Sub1%>%
+ 
