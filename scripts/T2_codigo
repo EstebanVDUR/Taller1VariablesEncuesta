@@ -63,5 +63,9 @@ demo2.1 <- demo2 %>%
   group_by(divipola) %>%  # Agrupamos por código del municipio
   summarise(poblacion_tot = sum(poblacion, na.rm = TRUE))  # Sumamos la población total por municipio
 
-# Línea comentada: aquí se haría un cruce con otra tabla demográfica, probablemente para análisis adicional
-# final_demo <- merge(demo2.1, demo2.2, by.x = "divipola", by.y = "divipola")
+# ---------------------
+# TAREA 5: Utilizamos merge() para unir las dos bases de datos principales
+# ---------------------
+
+final_demo <- merge(demo2.1, tabla_final, by.x = "divipola", by.y = "divipola")
+
