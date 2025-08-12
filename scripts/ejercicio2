@@ -39,11 +39,11 @@ tabla_final <- col_frame %>%
 #Tarea 4
 
 demo2 <- data_demo %>%  
-  rename(Munic_Dept = 'Código Entidad',
+  rename(divipola = 'Código Entidad',
          poblacion = 'Dato Numérico') %>%
   mutate(poblacion = as.numeric(poblacion))
 
 demo2.1 <- demo2 %>%
-  group_by(Munic_Dept) %>%
+  group_by(divipola) %>%
   summarise(poblacion_tot = sum(poblacion, na.rm=TRUE))
-#final_demo <- merge(demo2.1, demo2.2, by.x = "Munic_Dept", by.y = "Munic_Dept")
+#final_demo <- merge(demo2.1, demo2.2, by.x = "divipola", by.y = "divipola")
