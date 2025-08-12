@@ -1,20 +1,39 @@
 library(dplyr)
 library(tidyr)
 
-# Crear data_frame primero
-data_frame <- TenderosFU03_Publica %>%
+#Tarea 1
+
+frame_internet <- TenderosFU03_Publica %>%
   group_by(Munic_Dept, Municipio) %>%
-  summarise(internet = mean(uso_internet, na.rm = TRUE) * 100) %>%
-  ungroup() %>%
+  summarize(internet = mean(uso_internet, na.rm=TRUE) * 100) %>%
+  ungroup()
   rename(divipola = Munic_Dept)
 
-data_frame2 <- TenderosFU03_Publica%>%
-  #filter(actG1==1, uso_internet==1)
-  pivot_longer(cols=actG1:actG11, names_to = 'act', values_to = 'total')
+#Tarea 2
 
-frame <- data_frame2%>%
-  group_by(act)%>%
-  summarise(internet=mean(uso_internet, na.rm = TRUE)*100)
+ren_frame <- TenderosFU03_Publica %>%
+  #select(actG1:actG11) %>%
+  rename(Tienda.1=actG1, ComidaPreparada.2=actG2, Peluqueria.3=actG3, Ropa.4=actG4,
+         Otras.5=actG5, Papeleria.6=actG6, vidanocturna.7=actG7, productosinventario.8=actG8,
+         salud.9=actG9, servicios.10=actG10, ferreteria.11=actG11)
 
-#cod_frame <- TerriData_Dim2_Sub1%>%
- 
+col_frame <- ren_frame %>%
+  pivot_longer(cols = Tienda.1:ferreteria.11, names_to = "category",
+               values_to = "total")
+
+col_frame <- col_frame %>% separate(category, c("Actividad", "actG"))
+
+act_frame <- col_frame %>%
+  group_by(actG, Actividad) %>%
+  summarize(internet=mean(uso_internet, na.rm=TRUE)*100)
+
+#Tarea 3
+
+tabla_final <- col_frame %>%
+  filter(total == 1) %>%  # solo donde sí hay esa actividad
+  group_by(Munic_Dept, Municipio, actG, Actividad) %>%
+  summarise(internet = mean(uso_internet, na.rm = TRUE) * 100) %>%
+  rename(divipola = Munic_Dept) %>%
+  arrange(Municipio, actG)
+
+#Tarea 4
