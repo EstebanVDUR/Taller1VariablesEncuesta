@@ -44,7 +44,7 @@ act_frame <- col_frame %>%
 tabla_final <- col_frame %>%
   filter(total == 1) %>%  # Filtramos solo las filas donde la actividad está presente (valor 1)
   group_by(Munic_Dept, Municipio, actG, Actividad) %>%  # Agrupamos por municipio y tipo de actividad
-  summarise(internet = mean(uso_internet, na.rm = TRUE) * 100) %>%  # Calculamos el promedio de uso de internet
+  summarise(internet = percent(mean(uso_internet, na.rm = TRUE), accuracy = 0.1)) %>%  # Calculamos el promedio de uso de internet
   rename(divipola = Munic_Dept) %>%  # Renombramos la columna del departamento
   arrange(Municipio, actG)  # Ordenamos por municipio y tipo de actividad
 
@@ -61,7 +61,7 @@ demo2 <- data_demo %>%
 
 demo2.1 <- demo2 %>%
   group_by(divipola) %>%  # Agrupamos por código del municipio
-  summarise(poblacion_tot = sum(poblacion, na.rm = TRUE))  # Sumamos la población total por municipio
+  summarise(poblacion_tot = number(sum(poblacion, na.rm = TRUE)/ 1e6, accuracy = 0.1, suffix = " M"))  # Sumamos la población total por municipio
 
 # ---------------------
 # TAREA 5: Utilizamos merge() para unir las dos bases de datos principales
