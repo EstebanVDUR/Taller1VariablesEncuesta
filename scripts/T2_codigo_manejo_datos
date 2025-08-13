@@ -61,6 +61,7 @@ demo2 <- data_demo %>%
 
 demo2.1 <- demo2 %>%
   group_by(divipola) %>%  # Agrupamos por código del municipio
+  filter(Año == 2024) %>%
   summarise(poblacion_tot = number(sum(poblacion, na.rm = TRUE)/ 1e6, accuracy = 0.1, suffix = " M"))  # Sumamos la población total por municipio
 
 # ---------------------
