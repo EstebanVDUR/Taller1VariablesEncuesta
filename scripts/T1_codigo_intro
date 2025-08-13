@@ -23,6 +23,7 @@ print(resumen)
 ggplot(resumen, aes(x = Respuesta, y = Porcentaje, fill = Respuesta)) +
   geom_bar(stat = "identity") +  # Dibuja las barras según los porcentajes
   geom_text(aes(label = paste0(round(Porcentaje, 1), "%")), vjust = -0.5) +  # Agrega etiquetas de porcentaje arriba de cada barra
+  scale_fill_manual(values = c("#1b9e77", "#7570b3")) + # Colores de la gráfica
   labs(
     title = "¿En los últimos 2 años... ha recibido capacitación?",
     x = "Respuesta",
