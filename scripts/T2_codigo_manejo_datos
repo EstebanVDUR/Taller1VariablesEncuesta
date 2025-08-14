@@ -71,3 +71,46 @@ demo2.1 <- demo2 %>%
 
 final_demo <- merge(demo2.1, tabla_final, by.x = "divipola", by.y = "divipola")
 
+#COSITASSSS
+#librarys 
+
+library(dplyr)
+library(tidyr)
+#########################################################
+
+#datasets
+TenderosFU03_Publica <- read_dta("D:/universidad/2 semestre/haciendo economía/TenderosFU03_Publica.dta")
+
+TerriData_Dim2_Sub3 <- read_excel("C:/Users/prestamour/Downloads/TerriData_Dim2.xlsx/TerriData_Dim2_Sub3.xlsx")
+
+
+###############################
+#limpieza
+
+TerriData_Dim2_Sub3 <- TerriData_Dim2_Sub3[-1,]
+
+TerriData_Dim2_Sub3 <- TerriData_Dim2_Sub3 %>%
+  mutate(
+    `Dato Numérico Limpio` = `Dato Numérico` %>%
+      gsub("\\.", "", .) %>%           # Quitar puntos de miles
+      gsub(",00$", "", .) %>%          # Quitar ",00" si está al final
+      gsub(",", ".", .) %>%            # Si hay otros decimales, convertir a punto decimal
+      as.numeric()                     # Convertir a número
+  )
+
+TerriData_Dim2_Sub3 <- TerriData_Dim2_Sub3 %>%
+  mutate(Codigo=as.numeric(`Código Entidad`))
+
+#--------------------------------------------------------
+
+nuevo <- TerriData_Dim2_Sub3 %>%
+  group_by(Codigo) %>%
+  filter(Año==2024, `Unidad de Medida`!= "Porcentaje (el valor está multiplicado por 100)")%>%
+  summarise(poblacion = sum(`Dato Numérico Limpio`))
+
+# Instalar si no lo tienes
+install.packages("writexl")
+library(writexl)
+
+# Guardar como Excel
+write_xlsx(nuevo, "mi_dataframe.xlsx")
