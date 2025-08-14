@@ -1,6 +1,7 @@
 # Cargamos las librerías necesarias para manipulación de datos
 library(dplyr)
 library(tidyr)
+library(scales)
 #Elimina las etiquetas y deja los valores subyacentes como numéricos
 TenderosFU03_Publica <- TenderosFU03_Publica %>%
   mutate(uso_internet = zap_labels(uso_internet))
