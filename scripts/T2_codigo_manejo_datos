@@ -26,6 +26,8 @@ internet_munic <- TenderosFU03_Publica %>%
 # TAREA 2: Transformar datos de actividades y calcular uso de internet por tipo de actividad
 # ---------------------
 
+#Limpiamos y organizamos datos de tal forma que se puedan agrupar por actividad
+
 ren_frame <- TenderosFU03_Publica %>%
   # Renombramos las columnas de actividades con nombres mas descriptivos
   rename(Tienda.1 = actG1, ComidaPreparada.2 = actG2, Peluqueria.3 = actG3, Ropa.4 = actG4,
@@ -39,6 +41,8 @@ col_frame <- ren_frame %>%
 col_frame <- col_frame %>%
   # Separamos la columna "category" en dos: el nombre de la actividad y su numero
   separate(category, c("Actividad", "actG"))
+
+#Frame con uso de internet por actividad economica
 
 internet_act <- col_frame %>%
   group_by(actG, Actividad) %>%  # Agrupamos por numero de actividad y nombre
@@ -60,6 +64,7 @@ internet_act_munic <- col_frame %>%
 # ---------------------
 
 #Limpieza de base datos
+
 TerriData_Dim2_Sub3 <- TerriData_Dim2_Sub3[-1,]
 
 TerriData_Dim2_Sub3 <- TerriData_Dim2_Sub3 %>%
