@@ -1,7 +1,13 @@
-# Cargamos las librerías necesarias para manipulación de datos
+# Cargamos las librerias necesarias para manipulacion de datos
 library(dplyr)
 library(tidyr)
 library(scales)
+
+#Paths datasets utilizados
+
+TenderosFU03_Publica <- read_dta("D:/universidad/2 semestre/haciendo economía/TenderosFU03_Publica.dta")
+TerriData_Dim2_Sub3 <- read_excel("D:/universidad/2 semestre/haciendo economía/TerriData_Dim2_Sub3.xlsx")
+
 #Elimina las etiquetas y deja los valores subyacentes como numéricos
 TenderosFU03_Publica <- TenderosFU03_Publica %>%
   mutate(uso_internet = zap_labels(uso_internet))
@@ -10,7 +16,7 @@ TenderosFU03_Publica <- TenderosFU03_Publica %>%
 # TAREA 1: Promedio de uso de internet por municipio
 # ---------------------
 
-frame_internet <- TenderosFU03_Publica %>%
+internet_munic <- TenderosFU03_Publica %>%
   group_by(Munic_Dept, Municipio) %>%  # Agrupa los datos por departamento y municipio
   summarize(internet = mean(uso_internet, na.rm = TRUE) * 100) %>%  # Calcula el promedio de uso de internet (en porcentaje)
   ungroup() %>%  # Desagrupa los datos
@@ -21,7 +27,7 @@ frame_internet <- TenderosFU03_Publica %>%
 # ---------------------
 
 ren_frame <- TenderosFU03_Publica %>%
-  # Renombramos las columnas de actividades con nombres más descriptivos
+  # Renombramos las columnas de actividades con nombres mas descriptivos
   rename(Tienda.1 = actG1, ComidaPreparada.2 = actG2, Peluqueria.3 = actG3, Ropa.4 = actG4,
          Otras.5 = actG5, Papeleria.6 = actG6, vidanocturna.7 = actG7, productosinventario.8 = actG8,
          salud.9 = actG9, servicios.10 = actG10, ferreteria.11 = actG11)
@@ -31,18 +37,18 @@ col_frame <- ren_frame %>%
   pivot_longer(cols = Tienda.1:ferreteria.11, names_to = "category", values_to = "total")
 
 col_frame <- col_frame %>%
-  # Separamos la columna "category" en dos: el nombre de la actividad y su número
+  # Separamos la columna "category" en dos: el nombre de la actividad y su numero
   separate(category, c("Actividad", "actG"))
 
-act_frame <- col_frame %>%
-  group_by(actG, Actividad) %>%  # Agrupamos por número de actividad y nombre
+internet_act <- col_frame %>%
+  group_by(actG, Actividad) %>%  # Agrupamos por numero de actividad y nombre
   summarize(internet = mean(uso_internet, na.rm = TRUE) * 100)  # Calculamos el promedio de uso de internet por actividad
 
 # ---------------------
-# TAREA 3: Promedio de uso de internet por municipio y actividad (solo donde la actividad está presente)
+# TAREA 3: Promedio de uso de internet por municipio y actividad (solo donde la actividad esta presente)
 # ---------------------
 
-tabla_final <- col_frame %>%
+internet_act_munic <- col_frame %>%
   filter(total == 1) %>%  # Filtramos solo las filas donde la actividad está presente (valor 1)
   group_by(Munic_Dept, Municipio, actG, Actividad) %>%  # Agrupamos por municipio y tipo de actividad
   summarise(internet = percent(mean(uso_internet, na.rm = TRUE), accuracy = 0.1)) %>%  # Calculamos el promedio de uso de internet
@@ -50,43 +56,10 @@ tabla_final <- col_frame %>%
   arrange(Municipio, actG)  # Ordenamos por municipio y tipo de actividad
 
 # ---------------------
-# TAREA 4: Procesar datos demográficos para obtener población total por municipio
+# TAREA 4: Procesar datos demograficos para obtener poblacion total por municipio
 # ---------------------
 
-demo2 <- data_demo %>%  
-  # Renombramos columnas para estandarizarlas
-  rename(divipola = 'Código Entidad',
-         poblacion = 'Dato Numérico') %>%
-  # Convertimos la columna de población a tipo numérico
-  mutate(poblacion = as.numeric(poblacion))
-
-demo2.1 <- demo2 %>%
-  group_by(divipola) %>%  # Agrupamos por código del municipio
-  filter(Año == 2024) %>%
-  summarise(poblacion_tot = number(sum(poblacion, na.rm = TRUE)/ 1e6, accuracy = 0.1, suffix = " M"))  # Sumamos la población total por municipio
-
-# ---------------------
-# TAREA 5: Utilizamos merge() para unir las dos bases de datos principales
-# ---------------------
-
-final_demo <- merge(demo2.1, tabla_final, by.x = "divipola", by.y = "divipola")
-
-#COSITASSSS
-#librarys 
-
-library(dplyr)
-library(tidyr)
-#########################################################
-
-#datasets
-TenderosFU03_Publica <- read_dta("D:/universidad/2 semestre/haciendo economía/TenderosFU03_Publica.dta")
-
-TerriData_Dim2_Sub3 <- read_excel("C:/Users/prestamour/Downloads/TerriData_Dim2.xlsx/TerriData_Dim2_Sub3.xlsx")
-
-
-###############################
-#limpieza
-
+#Limpieza de base datos
 TerriData_Dim2_Sub3 <- TerriData_Dim2_Sub3[-1,]
 
 TerriData_Dim2_Sub3 <- TerriData_Dim2_Sub3 %>%
@@ -99,18 +72,29 @@ TerriData_Dim2_Sub3 <- TerriData_Dim2_Sub3 %>%
   )
 
 TerriData_Dim2_Sub3 <- TerriData_Dim2_Sub3 %>%
-  mutate(Codigo=as.numeric(`Código Entidad`))
+  mutate(divipola=as.numeric(`Código Entidad`))
 
-#--------------------------------------------------------
+#Frame con poblacion por codigo DANE
 
-nuevo <- TerriData_Dim2_Sub3 %>%
-  group_by(Codigo) %>%
+poblacion <- TerriData_Dim2_Sub3 %>%
+  group_by(divipola) %>%
   filter(Año==2024, `Unidad de Medida`!= "Porcentaje (el valor está multiplicado por 100)")%>%
   summarise(poblacion = sum(`Dato Numérico Limpio`))
 
-# Instalar si no lo tienes
-install.packages("writexl")
+
+# ---------------------
+# TAREA 5: Utilizamos merge() para unir las dos bases de datos principales
+# ---------------------
+
+final_dataframe <- merge(poblacion, internet_act_munic, by.x = "divipola", by.y = "divipola")
+
+# --------------------
+#Exportamos dataframes a excel para graficar con powerbi utilizando libreria writexl
+# --------------------
+
 library(writexl)
 
-# Guardar como Excel
-write_xlsx(nuevo, "mi_dataframe.xlsx")
+# Guardar como Excel cada dataframe
+
+write_xlsx(internet_act_munic, "internet_act_munic.xlsx")
+write_xlsx(final_dataframe, "final_dataframe.xlsx")
