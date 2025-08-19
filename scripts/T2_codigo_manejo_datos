@@ -2,6 +2,7 @@
 library(dplyr)
 library(tidyr)
 library(scales)
+library(readxl)
 
 #Paths datasets utilizados
 
